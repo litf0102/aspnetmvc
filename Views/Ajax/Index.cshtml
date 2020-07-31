@@ -1,0 +1,90 @@
+﻿@using aspnetmvc2.Models
+@model SearchViewModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+    <div class="jumbotron">
+        <h2>jQuery&Ajax検証</h2>
+        @using (Html.BeginForm("Search", "Ajax", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <p>
+                <label for="search">検索条件１:</label>@Html.TextBoxFor(m => m.complete, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.complete, "", new { @class = "text-danger" })
+            </p>
+            <p>
+                <label for="somevalue">検索条件２:</label>@Html.TextBoxFor(m => m.somevalue, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.somevalue, "", new { @class = "text-danger" })
+            </p>
+            <input type="submit" value="検索(submit)" class="btn btn-primary" />
+        }
+        <hr />
+        <button id="Search2" class="btn btn-primary" onclick="actionSearch2();" data-toggle="modal">
+            <span title="Search">検索(Ajax)</span>
+        </button>
+
+        <script type="text/javascript" language="javascript">
+            $(document).ready(function () {
+                var selectValue = document.getElementById("lang").value;
+                if (!selectValue) {
+                    selectValue = "ja-JP";
+                }
+                var _Url = "/" + selectValue + "/Ajax/Autocomplete";
+
+                $('#somevalue').autocomplete({
+                    source: _Url
+                });
+            });
+
+            $(function () {
+                //alert("test");
+                var selectValue = document.getElementById("lang").value;
+                if (!selectValue) {
+                    selectValue = "ja-JP";
+                }
+                var _Url = "/" + selectValue + "/Ajax/ListUser";
+
+                $("#complete").autocomplete({
+                    source: _Url,
+                    autoFocus: true,
+                });
+            });
+
+            function actionSearch2() {
+                var selectValue = document.getElementById("lang").value;
+                if (!selectValue) {
+                    selectValue = "ja-JP";
+                }
+                var _Url = "/" + selectValue +  "/Ajax/Search2";
+                var condition = new Array(2);
+                condition[0] = document.getElementById("complete").value;
+                condition[1] = document.getElementById("somevalue").value;
+
+                $.ajax({
+                    url: _Url,
+                    data: { conditions: condition },
+                    type: "POST",
+                    dataType: "JSON",
+                    async: true,
+                    beforeSend: function () {
+                        // 前処理を実行する
+                        alert("Request start.");
+                    },
+                    success: function (data) {
+                        alert("Ajax Recieve OK.");
+                    },
+                    complete: function () {
+                        // データ表示処理を実行する
+                        alert("Request end.");
+                    },
+                    error: function () {
+                        alert("ERROR!!!");
+                    }
+                });
+            }
+        </script>
+
+    </div>
+

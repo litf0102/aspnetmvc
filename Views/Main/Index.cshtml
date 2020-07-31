@@ -1,0 +1,142 @@
+﻿@model IEnumerable<aspnetmvc2.Models.MOVIES>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Director)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Director)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
+<button id="reload" class="btn btn-primary" onclick="actionReload();" data-toggle="modal">
+    <span title="reload">リロード(SQL文発行)</span>
+</button>
+<button id="reload2" class="btn btn-primary" onclick="actionReload2();" data-toggle="modal">
+    <span title="reload">リロード2(SQL文発行)</span>
+</button>
+<div id="datadisp"class="form-horizontal">
+</div>
+<script type="text/javascript" language="javascript">
+    function actionReload() {
+        var selectValue = document.getElementById("lang").value;
+        if (!selectValue) {
+            selectValue = "ja-JP";
+        }
+        _Url = "/" + selectValue + "/Main/Reload";
+
+        $.ajax({
+            url: _Url,
+            type: "POST",
+            dataType: "JSON",
+            async: true,
+            beforeSend: function () {
+                // 前処理を実行する
+                alert("Request start.");
+            },
+            success: function (data) {
+                alert(data);
+                $.each(data, function (index, movie) {
+                    $('#datadisp').append('<p>Id: ' + movie.Id + '</p>' +
+                        '<p>Title: ' + movie.Title + '</p>' +
+                        '<p>Director: ' + movie.Director + '</p>' + '<br/>');
+                });
+
+                //var tostr = '';
+                //for (var i = 0; i < data.length; i++) {
+                //    tostr += '<br />ID: ' + data[i].Id + '<br />Name:' + data[i].Title + '<br />Price: ' + data[i].Director + '<br />'
+                //} $('#datadisp').html(tostr);
+
+            },
+            complete: function () {
+                // データ表示処理を実行する
+                alert("Request end.");
+            },
+            error: function () {
+                alert("ERROR!!!");
+                var selectValue = document.getElementById("lang").value;
+                if (!selectValue) {
+                    selectValue = "ja-JP";
+                }
+                var _Url = "/" + selectValue + "/Error/Index";
+                location.href = _Url;
+            }
+        });
+    }
+
+    function actionReload2() {
+        var selectValue = document.getElementById("lang").value;
+        if (!selectValue) {
+            selectValue = "ja-JP";
+        }
+        _Url = "/" + selectValue + "/Main/Reload2";
+
+        $.ajax({
+            url: _Url,
+            type: "POST",
+            dataType: "JSON",
+            async: true,
+            beforeSend: function () {
+                // 前処理を実行する
+                //alert("Request start.");
+            },
+            success: function (data) {
+                //alert(data);
+                $.each(data, function (index, emp) {
+                    $('#datadisp').append('<p>Id: ' + emp.ID + '</p>' +
+                        '<p>Name: ' + emp.NAME + '</p>' +
+                        '<p>Sex: ' + emp.SEX + '</p>' +
+                        '<p>Dept: ' + emp.DEPT_NAME + '</p>' + '<br/>');
+                });
+
+                //var tostr = '';
+                //for (var i = 0; i < data.length; i++) {
+                //    tostr += '<br />ID: ' + data[i].Id + '<br />Name:' + data[i].Title + '<br />Price: ' + data[i].Director + '<br />'
+                //} $('#datadisp').html(tostr);
+
+            },
+            complete: function () {
+                // データ表示処理を実行する
+                //alert("Request end.");
+            },
+            error: function () {
+                alert("ERROR!!!");
+                var selectValue = document.getElementById("lang").value;
+                if (!selectValue) {
+                    selectValue = "ja-JP";
+                }
+                var _Url = "/" + selectValue + "/Error/Index";
+                location.href = _Url;
+            }
+        });
+    }
+</script>
